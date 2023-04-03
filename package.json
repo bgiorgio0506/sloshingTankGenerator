@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./build/main.js",
+    "start": "node ./build/main.js",
     "build": "tsc"
   },
   "keywords": [],
