@@ -17,8 +17,8 @@ export class TankGenerator implements ITankDetails{
     constructor(mainBody:IMainBodyShape, base:IBaseShape, minFluidVolume:number,maxFluidVolume:number,  baseAreaTarget:number){
         this.mainBody = mainBody;
         this.base = base;
-        this.minFluidVolume = minFluidVolume;
-        this.maxFluidVolume = maxFluidVolume;
+        this.minFluidVolume = minFluidVolume*0.001;
+        this.maxFluidVolume = maxFluidVolume*0.001;
         this.baseArea = baseAreaTarget;
     }
 
@@ -52,7 +52,7 @@ export class TankGenerator implements ITankDetails{
         let configurations = new Array<ITankDetails>();
         let step = (this.maxFluidVolume-this.minFluidVolume)/numberOfonfigurations;
         for (let index = 0; index < numberOfonfigurations; index++) {
-            let volume = this.minFluidVolume+index*step;
+            let volume = this.minFluidVolume+step*index;
             let dimensions = this.getTargetDimensions(volume);
             configurations.push({
                 mainBody: this.mainBody, 
