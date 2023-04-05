@@ -38,14 +38,15 @@ export class TankGenerator implements ITankDetails{
         switch (this.baseType) {
             case IBaseShape.SPHERICAL:
                     baseVolume = 4/3*Math.PI*Math.pow(radius, 3);
+                    lenght = (this.totBodyVolume)/this.baseArea+ 2*radius;
                 break;
             default:
                 //the base is 2d so the volume is 0
                 baseVolume = 0;
+                lenght = (this.totBodyVolume)/this.baseArea;
                 break;
         }
         //console.log(baseVolume, totBodyVolume, radius, this.baseArea);
-        lenght = (this.totBodyVolume)/this.baseArea+ 2*radius;
         return {lenght, baseArea:this.baseArea, baseVolume, totBodyVolume:this.totBodyVolume, targetVolume: this.totBodyVolume+baseVolume};
     }
 
