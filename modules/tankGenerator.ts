@@ -71,18 +71,18 @@ export class TankGenerator implements ITankDetails{
                 mainBodyType: this.mainBodyType, 
                 baseType: this.baseType, 
                 //tank geometry dimensions
-                baseArea:dimensions.baseArea, 
+                baseArea:dimensions.baseArea*Math.pow(10, 6),
                 tankLen:dimensions.lenght*100, 
                 //tank volumes
-                totVolume:dimensions.targetVolume,
-                totBodyVolume:dimensions.totBodyVolume,
-                baseVolume:dimensions.baseVolume,
+                totVolume:dimensions.targetVolume*100,
+                totBodyVolume:dimensions.totBodyVolume*100,
+                baseVolume:dimensions.baseVolume*100,
                 //tank mass
                 tankDryMass:this.getMass(volume, this.petDensity).tankDryMass,
                 tankWetMass:this.getMass(volume, this.petDensity).tankWetMass,
                 //tank fluid mass
-                fluidQuantity:volume*this.fluidDensity,
-                fluidVoulme:volume,
+                fluidQuantity:volume*this.fluidDensity*100,
+                fluidVoulme:volume*100,
             });
         }
         return configurations;
