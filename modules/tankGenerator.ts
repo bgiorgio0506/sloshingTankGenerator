@@ -1,22 +1,27 @@
 import { ITankDetails, IMainBodyShape, IBaseShape } from "../interfaces/ITank";
 
 export class TankGenerator implements ITankDetails{
-    volume: number = 0; 
-    expectedMass: number = 0;
+    totVolume: number = 0; 
+    baseVolume: number = 0;
     baseArea: number = 0; 
     tankLen: number = 0;
-    mainBody: IMainBodyShape;
-    base: IBaseShape;
+    mainBodyType: IMainBodyShape;
+    baseType: IBaseShape;
     fluidDensity: number = 997; // kg/m3 maybe change it to salt water density value 1025 kg/m3
     petDensity: number = 1380; // kg/m3
     minFluidVolume: number = 0;
     maxFluidVolume: number = 0;
     targetVolume: number = 0;
     antiSloshingMass: number = 0.1; // kg this is the maximum mass of the anti sloshing system
+    fluidQuantity: number = 0;
+    fluidVoulme: number = 0;
+    tankDryMass: number = 0;
+    tankWetMass: number = 0;
+
 
     constructor(mainBody:IMainBodyShape, base:IBaseShape, minFluidVolume:number,maxFluidVolume:number,  baseAreaTarget:number){
-        this.mainBody = mainBody;
-        this.base = base;
+        this.mainBodyType = mainBody;
+        this.baseType = base;
         this.minFluidVolume = minFluidVolume*0.001;
         this.maxFluidVolume = maxFluidVolume*0.001;
         this.baseArea = baseAreaTarget;
@@ -28,39 +33,52 @@ export class TankGenerator implements ITankDetails{
         let baseVolume = 0;
         let radius = Math.sqrt(this.baseArea/Math.PI);
         let totVolume= fluidVolume*2; // required volume is twice the max fluid volume
-        switch (this.base) {
+        switch (this.baseType) {
             case IBaseShape.SPHERICAL:
-                    baseVolume = 4/3*Math.PI*Math.pow(radius, 3);
+                    baseVolume = (4/3*Math.PI*Math.pow(radius, 3))/2;
                 break;
             default:
                 //the base is 2d so the volume is 0
                 baseVolume = 0;
                 break;
         }
-
-        lenght = (totVolume-baseVolume)/this.baseArea;
-        return {lenght, baseArea:this.baseArea, baseVolume, volume:totVolume, };
-
+        console.log(baseVolume, totVolume, radius, this.baseArea);
+        lenght = (totVolume-2*baseVolume)/this.baseArea;
+        return {lenght, baseArea:this.baseArea, baseVolume, totVolume, };
     }
 
     getMass(fluidVolume:number, materialDensity:number){
-        return fluidVolume*this.fluidDensity+ materialDensity*this.getTargetDimensions(fluidVolume).volume+ this.antiSloshingMass;
+        return{ tankWetMass: fluidVolume*this.fluidDensity+ materialDensity*this.getTargetDimensions(fluidVolume).totVolume+ this.antiSloshingMass, 
+                tankDryMass: materialDensity*this.getTargetDimensions(fluidVolume).totVolume+ this.antiSloshingMass};
     }
 
     //generate a number of configurations based on the min and max fluid volume
     generateTanks(numberOfonfigurations:number):Array<ITankDetails>{
         let configurations = new Array<ITankDetails>();
+
+        if(this.minFluidVolume>=this.maxFluidVolume) 
+            throw new Error("The minimum fluid volume cannot be greater or egual than the maximum fluid volume");
+        
         let step = (this.maxFluidVolume-this.minFluidVolume)/numberOfonfigurations;
         for (let index = 0; index < numberOfonfigurations; index++) {
             let volume = this.minFluidVolume+step*index;
             let dimensions = this.getTargetDimensions(volume);
             configurations.push({
-                mainBody: this.mainBody, 
-                base: this.base, 
+                //tank geometry type
+                mainBodyType: this.mainBodyType, 
+                baseType: this.baseType, 
+                //tank geometry dimensions
                 baseArea:dimensions.baseArea, 
                 tankLen:dimensions.lenght, 
-                volume:dimensions.volume, 
-                expectedMass:this.getMass(volume, this.petDensity),
+                //tank volumes
+                totVolume:dimensions.totVolume,
+                baseVolume:dimensions.baseVolume,
+                //tank mass
+                tankDryMass:this.getMass(volume, this.petDensity).tankDryMass,
+                tankWetMass:this.getMass(volume, this.petDensity).tankWetMass,
+                //tank fluid mass
+                fluidQuantity:volume*this.fluidDensity,
+                fluidVoulme:volume,
             });
         }
         return configurations;

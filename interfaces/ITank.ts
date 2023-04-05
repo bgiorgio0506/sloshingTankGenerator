@@ -1,10 +1,14 @@
 export interface ITankDetails{
-    mainBody: IMainBodyShape, 
-    base: IBaseShape, 
+    mainBodyType: IMainBodyShape, 
+    baseType: IBaseShape, 
     baseArea:number, 
     tankLen:number, 
-    volume:number, 
-    expectedMass:number,
+    baseVolume:number,
+    totVolume:number, 
+    fluidQuantity:number,
+    fluidVoulme:number,
+    tankDryMass:number,
+    tankWetMass:number,
 }
 
 export enum IMainBodyShape {
@@ -14,6 +18,8 @@ export enum IMainBodyShape {
 }
 
 export enum IBaseShape{
-    RECT = 1, 
-    SPHERICAL = 2
+    PLANE = 1,
+    PLANE_CIRCULAR = 2,
+    PLANE_RECTANGULAR = 3, 
+    SPHERICAL = 4
 }
