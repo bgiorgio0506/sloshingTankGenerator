@@ -1,10 +1,11 @@
 export interface ITankDetails{
-    mainBodyType: IMainBodyShape, 
+    mainBodyType: IMainBodyShape,
     baseType: IBaseShape, 
     baseArea:number, 
     tankLen:number, 
     baseVolume:number,
     totVolume:number, 
+    totBodyVolume:number,
     fluidQuantity:number,
     fluidVoulme:number,
     tankDryMass:number,

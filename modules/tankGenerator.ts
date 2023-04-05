@@ -17,6 +17,7 @@ export class TankGenerator implements ITankDetails{
     fluidVoulme: number = 0;
     tankDryMass: number = 0;
     tankWetMass: number = 0;
+    totBodyVolume: number = 0;
 
 
     constructor(mainBody:IMainBodyShape, base:IBaseShape, minFluidVolume:number,maxFluidVolume:number,  baseAreaTarget:number){
@@ -32,24 +33,25 @@ export class TankGenerator implements ITankDetails{
         let lenght = 0;
         let baseVolume = 0;
         let radius = Math.sqrt(this.baseArea/Math.PI);
-        let totVolume= fluidVolume*2; // required volume is twice the max fluid volume
+        this.totBodyVolume= fluidVolume*2; // required volume is twice the max fluid volume
+
         switch (this.baseType) {
             case IBaseShape.SPHERICAL:
-                    baseVolume = (4/3*Math.PI*Math.pow(radius, 3))/2;
+                    baseVolume = 4/3*Math.PI*Math.pow(radius, 3);
                 break;
             default:
                 //the base is 2d so the volume is 0
                 baseVolume = 0;
                 break;
         }
-        console.log(baseVolume, totVolume, radius, this.baseArea);
-        lenght = (totVolume-2*baseVolume)/this.baseArea;
-        return {lenght, baseArea:this.baseArea, baseVolume, totVolume, };
+        //console.log(baseVolume, totBodyVolume, radius, this.baseArea);
+        lenght = (this.totBodyVolume)/this.baseArea+ 2*radius;
+        return {lenght, baseArea:this.baseArea, baseVolume, totBodyVolume:this.totBodyVolume, targetVolume: this.totBodyVolume+baseVolume};
     }
 
     getMass(fluidVolume:number, materialDensity:number){
-        return{ tankWetMass: fluidVolume*this.fluidDensity+ materialDensity*this.getTargetDimensions(fluidVolume).totVolume+ this.antiSloshingMass, 
-                tankDryMass: materialDensity*this.getTargetDimensions(fluidVolume).totVolume+ this.antiSloshingMass};
+        return{ tankWetMass: fluidVolume*this.fluidDensity+ materialDensity*this.getTargetDimensions(fluidVolume).targetVolume+ this.antiSloshingMass, 
+                tankDryMass: materialDensity*this.getTargetDimensions(fluidVolume).targetVolume+ this.antiSloshingMass};
     }
 
     //generate a number of configurations based on the min and max fluid volume
@@ -69,9 +71,10 @@ export class TankGenerator implements ITankDetails{
                 baseType: this.baseType, 
                 //tank geometry dimensions
                 baseArea:dimensions.baseArea, 
-                tankLen:dimensions.lenght, 
+                tankLen:dimensions.lenght*100, 
                 //tank volumes
-                totVolume:dimensions.totVolume,
+                totVolume:dimensions.targetVolume,
+                totBodyVolume:dimensions.totBodyVolume,
                 baseVolume:dimensions.baseVolume,
                 //tank mass
                 tankDryMass:this.getMass(volume, this.petDensity).tankDryMass,
