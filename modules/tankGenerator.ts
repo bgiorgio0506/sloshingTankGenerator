@@ -42,7 +42,6 @@ export class TankGenerator implements ITankDetails{
                 break;
             default:
                 //the base is 2d so the volume is 0
-                baseVolume = 0;
                 lenght = (this.totBodyVolume)/this.baseArea;
                 break;
         }
@@ -65,24 +64,25 @@ export class TankGenerator implements ITankDetails{
         let step = (this.maxFluidVolume-this.minFluidVolume)/numberOfonfigurations;
         for (let index = 0; index < numberOfonfigurations; index++) {
             let volume = this.minFluidVolume+step*index;
+            //if(volume >this.maxFluidVolume) volume = this.maxFluidVolume;
             let dimensions = this.getTargetDimensions(volume);
             configurations.push({
                 //tank geometry type
                 mainBodyType: this.mainBodyType, 
                 baseType: this.baseType, 
                 //tank geometry dimensions
-                baseArea:dimensions.baseArea*Math.pow(10, 6),
+                baseArea:dimensions.baseArea*Math.pow(10, 4),
                 tankLen:dimensions.lenght*100, 
                 //tank volumes
-                totVolume:dimensions.targetVolume*100,
-                totBodyVolume:dimensions.totBodyVolume*100,
-                baseVolume:dimensions.baseVolume*100,
+                totVolume:dimensions.targetVolume*1000,
+                totBodyVolume:dimensions.totBodyVolume*1000,
+                baseVolume:dimensions.baseVolume*1000,
                 //tank mass
                 tankDryMass:this.getMass(volume, this.petDensity).tankDryMass,
                 tankWetMass:this.getMass(volume, this.petDensity).tankWetMass,
                 //tank fluid mass
-                fluidQuantity:volume*this.fluidDensity*100,
-                fluidVoulme:volume*100,
+                fluidQuantity:volume*this.fluidDensity,
+                fluidVoulme:volume*1000,
             });
         }
         return configurations;
