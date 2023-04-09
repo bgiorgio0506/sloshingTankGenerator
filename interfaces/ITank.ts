@@ -10,6 +10,9 @@ export interface ITankDetails{
     fluidVoulme:number,
     tankDryMass:number,
     tankWetMass:number,
+    wallThickness:number,
+    usableVolume:number,
+    
 }
 
 export enum IMainBodyShape {
